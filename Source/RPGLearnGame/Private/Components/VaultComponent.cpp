@@ -9,6 +9,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
+DECLARE_LOG_CATEGORY_EXTERN(LogVaultComponent, Log, All);
+
 UVaultComponent::UVaultComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -62,7 +64,7 @@ void UVaultComponent::VaultTraceLandPos(const FHitResult& CalculateHeightHitResu
 		UEngineTypes::ConvertToTraceType(ECC_Visibility),
 		false,
 		{},
-		EDrawDebugTrace::ForDuration,
+		EDrawDebugTrace::None,
 		LandPosHitResult,
 		true,
 		FColor::Blue,
@@ -91,7 +93,7 @@ void UVaultComponent::VaultCalculateHeight(FHitResult CalculateDistanceHitResult
 			UEngineTypes::ConvertToTraceType(ECC_Visibility),
 			false,
 			{},
-			EDrawDebugTrace::ForDuration,
+			EDrawDebugTrace::None,
 			CalculateHeightHitResult,
 			true,
 			FColor::Red,
@@ -139,7 +141,7 @@ void UVaultComponent::Vault()
 			UEngineTypes::ConvertToTraceType(ECC_Visibility),
 			false,
 			{},
-			EDrawDebugTrace::ForDuration,
+			EDrawDebugTrace::None,
 			CalculateDistanceHitResult,
 			true,
 			FColor::Red,
