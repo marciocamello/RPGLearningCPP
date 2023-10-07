@@ -12,12 +12,20 @@
 UVaultComponent::UVaultComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+	
 	CanWarp = false;
 	VaultMontage = nullptr;
+
+	Mesh = nullptr;
+	Movement = nullptr;
+	MotionWarping = nullptr;
 	
-	Mesh = GetOwner()->GetComponentByClass<USkeletalMeshComponent>();
-	Movement = GetOwner()->GetComponentByClass<UCharacterMovementComponent>();
-	MotionWarping = GetOwner()->GetComponentByClass<UMotionWarpingComponent>();
+	if(GetOwner())
+	{
+		Mesh = GetOwner()->GetComponentByClass<USkeletalMeshComponent>();
+		Movement = GetOwner()->GetComponentByClass<UCharacterMovementComponent>();
+		MotionWarping = GetOwner()->GetComponentByClass<UMotionWarpingComponent>();
+	}
 }
 
 void UVaultComponent::VaultTraceStartPos(int CalculateHeightIndex, const FHitResult& CalculateHeightHitResult)
