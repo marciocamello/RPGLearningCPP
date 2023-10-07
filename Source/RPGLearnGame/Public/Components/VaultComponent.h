@@ -3,26 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MotionWarpingComponent.h"
 #include "Components/ActorComponent.h"
 #include "VaultComponent.generated.h"
 
 class ARPGLearnGameCharacter;
-class UMotionWarpingComponent;
 
 UCLASS(Blueprintable, BlueprintType)
 class UVaultComponent : public UActorComponent
 {
 	GENERATED_BODY()
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Vault", meta = (AllowPrivateAccess = "true"))
-	USkeletalMeshComponent* Mesh;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Vault", meta = (AllowPrivateAccess = "true"))
-	UCharacterMovementComponent* Movement;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Vault", meta = (AllowPrivateAccess = "true"))
-	UMotionWarpingComponent* MotionWarping;
 	
 public:
 	UVaultComponent();

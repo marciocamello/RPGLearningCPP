@@ -15,17 +15,6 @@ UVaultComponent::UVaultComponent()
 	
 	CanWarp = false;
 	VaultMontage = nullptr;
-
-	Mesh = nullptr;
-	Movement = nullptr;
-	MotionWarping = nullptr;
-	
-	if(GetOwner())
-	{
-		Mesh = GetOwner()->GetComponentByClass<USkeletalMeshComponent>();
-		Movement = GetOwner()->GetComponentByClass<UCharacterMovementComponent>();
-		MotionWarping = GetOwner()->GetComponentByClass<UMotionWarpingComponent>();
-	}
 }
 
 void UVaultComponent::VaultTraceStartPos(int CalculateHeightIndex, const FHitResult& CalculateHeightHitResult)
@@ -167,6 +156,9 @@ void UVaultComponent::Vault()
 
 void UVaultComponent::VaultMotionWarp()
 {
+	USkeletalMeshComponent* Mesh = GetOwner()->GetComponentByClass<USkeletalMeshComponent>();
+	UCharacterMovementComponent* Movement = GetOwner()->GetComponentByClass<UCharacterMovementComponent>();
+	
 	const float MeshHeightMin = Mesh->GetComponentLocation().Z - 50.f;
 	const float MeshHeightMax = Mesh->GetComponentLocation().Z + 50.f;
 	const float MeshHeightValue = VaultLandPos.Z;
@@ -193,6 +185,8 @@ void UVaultComponent::VaultMotionWarp()
 
 void UVaultComponent::OnVaultMontageCompleted(FName NotifyName)
 {
+	UCharacterMovementComponent* Movement = GetOwner()->GetComponentByClass<UCharacterMovementComponent>();
+	
 	Movement->SetMovementMode(EMovementMode::MOVE_Walking);
 	GetOwner()->SetActorEnableCollision(true);
 	CanWarp = false;
@@ -201,6 +195,8 @@ void UVaultComponent::OnVaultMontageCompleted(FName NotifyName)
 
 void UVaultComponent::ApplyVaultMotionWarp(const FVector& MotionLocation, const FName MotionName) const
 {
+	UMotionWarpingComponent* MotionWarping = GetOwner()->GetComponentByClass<UMotionWarpingComponent>();
+	
 	FMotionWarpingTarget VaultTarget;
 	VaultTarget.Location = MotionLocation;
 	VaultTarget.Rotation = GetOwner()->GetActorRotation();
