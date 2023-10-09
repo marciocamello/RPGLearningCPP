@@ -62,6 +62,10 @@ class ARPGLearnGameCharacter : public ACharacter
 	/** Crouch Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* CrouchAction;
+	
+	/** Sprint Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* SprintAction;
 
 	/** Vault Input Action */
 	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -97,6 +101,10 @@ protected:
 	/** Called for crouching input */
 	void StartCrouch(const FInputActionValue& Value);
 	void StopCrouch(const FInputActionValue& Value);
+
+	/** Called for sprint input */
+	void StartSprint(const FInputActionValue& Value);
+	void StopSprint(const FInputActionValue& Value);
 	
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -123,6 +131,19 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, Category = "Character|Locomotion")
 	float MaxWalkSpeedCrouched;
+	
+	// Sprinting
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Character|Locomotion")
+	bool CanSprint;
+	
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Character|Locomotion")
+	bool IsSprinting;
+	
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Character|Locomotion")
+	FTimerHandle SprintTime;
+
+	UFUNCTION()
+	void DrainStamina() const;
 
 	// Vaulting
 	FORCEINLINE class UMotionWarpingComponent* GetMotionWarpingComponent() const { return MotionWarpingComponent; }

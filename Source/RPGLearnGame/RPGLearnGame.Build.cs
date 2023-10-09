@@ -21,7 +21,10 @@ public class RPGLearnGame : ModuleRules
 		{
 			"MotionWarping",
 			"MotionTrajectory",
-			"AnimGraphRuntime"
+			"AnimGraphRuntime",
+			"Slate",
+			"SlateCore",
+            "UMG",
 		});
 	}
 }

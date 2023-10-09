@@ -9,15 +9,12 @@
 class ARPGLearnGameCharacter;
 
 UCLASS(Blueprintable, BlueprintType)
-class UVaultComponent : public UActorComponent
+class RPGLEARNGAME_API UVaultComponent : public UActorComponent
 {
 	GENERATED_BODY()
 	
 public:
 	UVaultComponent();
-	void VaultTraceStartPos(int CalculateHeightIndex, const FHitResult& CalculateHeightHitResult);
-	void VaultTraceMiddlePos(const FHitResult& CalculateHeightHitResult);
-	void VaultTraceLandPos(const FHitResult& CalculateHeightHitResult, FHitResult& LandPosHitResult) const;
 
 	UFUNCTION(BlueprintCallable, Category="Default")
 	void Vault();
@@ -45,7 +42,6 @@ private:
 	void OnVaultMontageCompleted(FName NotifyName);
 	
 protected:
-	void VaultCalculateHeight(FHitResult CalculateDistanceHitResult);
 	void ApplyVaultMotionWarp(const FVector& MotionLocation, const FName MotionName) const;
 };
 

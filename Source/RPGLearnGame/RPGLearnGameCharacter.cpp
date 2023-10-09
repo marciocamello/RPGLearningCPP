@@ -61,6 +61,10 @@ ARPGLearnGameCharacter::ARPGLearnGameCharacter()
 	MaxWalkSpeedCrouched = 350.f;
 	CurrentWalkSpeed = 500.f;
 
+	// Sprint
+	CanSprint = true;
+	IsSprinting = false;
+
 	// Motion Warping
 	MotionWarpingComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpingComponent"));
 
@@ -81,7 +85,7 @@ void ARPGLearnGameCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	//Add Input Mapping Context
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	if (const APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
@@ -98,6 +102,14 @@ void ARPGLearnGameCharacter::BeginPlay()
 
 	CrouchTimeline.AddInterpFloat(CrouchCameraDistance, ProgressCrouchTimelineUpdate);
 	CrouchTimeline.SetTimelineFinishedFunc(ProgressCrouchTimelineFinished);
+}
+
+void ARPGLearnGameCharacter::DrainStamina() const
+{
+	if(CanSprint)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Draining Stamina"));
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -141,6 +153,10 @@ void ARPGLearnGameCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &ARPGLearnGameCharacter::StartCrouch);
 		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &ARPGLearnGameCharacter::StopCrouch);
 
+		// Sprint
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &ARPGLearnGameCharacter::StartSprint);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ARPGLearnGameCharacter::StopSprint);
+
 		// Vaulting
 		//EnhancedInputComponent->BindAction(VaultAction, ETriggerEvent::Started, this, &ARPGLearnGameCharacter::Vault);
 	}
@@ -153,7 +169,7 @@ void ARPGLearnGameCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 void ARPGLearnGameCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
-	FVector2D MovementVector = Value.Get<FVector2D>();
+	const FVector2D MovementVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr)
 	{
@@ -176,7 +192,7 @@ void ARPGLearnGameCharacter::Move(const FInputActionValue& Value)
 void ARPGLearnGameCharacter::Look(const FInputActionValue& Value)
 {
 	// input is a Vector2D
-	FVector2D LookAxisVector = Value.Get<FVector2D>();
+	const FVector2D LookAxisVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr)
 	{
@@ -200,4 +216,27 @@ void ARPGLearnGameCharacter::StopCrouch(const FInputActionValue& Value)
 	ARPGLearnGameCharacter::UnCrouch();
 	GetCharacterMovement()->MaxWalkSpeed = CurrentWalkSpeed;
 	CrouchTimeline.ReverseFromEnd();
+}
+
+void ARPGLearnGameCharacter::StartSprint(const FInputActionValue& Value)
+{
+	if(CanSprint && !bIsCrouched)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = 750.f;
+		
+		GetWorld()->GetTimerManager().SetTimer(
+			SprintTime,
+			this,
+			&ARPGLearnGameCharacter::DrainStamina,
+			0.1f,
+			true
+		);
+	}
+}
+
+void ARPGLearnGameCharacter::StopSprint(const FInputActionValue& Value)
+{
+	GetCharacterMovement()->MaxWalkSpeed = 500.f;
+	GetWorldTimerManager().ClearTimer(SprintTime);
+	IsSprinting = false;
 }
