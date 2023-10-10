@@ -11,6 +11,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Components/VaultComponent.h"
 #include "InputActionValue.h"
+#include "Components/PlayerStatsComponent.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -69,7 +70,10 @@ ARPGLearnGameCharacter::ARPGLearnGameCharacter()
 	MotionWarpingComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpingComponent"));
 
 	// Vaulting
-	//VaultComponent = CreateDefaultSubobject<UVaultComponent>(TEXT("VaultComponent"));
+	VaultComponent = CreateDefaultSubobject<UVaultComponent>(TEXT("VaultComponent"));
+
+	// Player Stats
+	PlayerStatsComponent = CreateDefaultSubobject<UPlayerStatsComponent>(TEXT("PlayerStatsComponent"));
 }
 
 void ARPGLearnGameCharacter::Tick(float DeltaTime)
@@ -102,14 +106,55 @@ void ARPGLearnGameCharacter::BeginPlay()
 
 	CrouchTimeline.AddInterpFloat(CrouchCameraDistance, ProgressCrouchTimelineUpdate);
 	CrouchTimeline.SetTimelineFinishedFunc(ProgressCrouchTimelineFinished);
+	
+	if(!IsSprinting)
+	{
+		GetWorldTimerManager().SetTimer(RestoreTime, this, &ARPGLearnGameCharacter::RestoreStamina, 1.f, true);
+	}
+	else
+	{
+		GetWorldTimerManager().ClearTimer(RestoreTime);
+	}
 }
 
-void ARPGLearnGameCharacter::DrainStamina() const
+float ARPGLearnGameCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
+	AController* EventInstigator, AActor* DamageCauser)
+{
+	bool bPlayerIsDead = false;
+	PlayerStatsComponent->DecreaseHealth(DamageAmount, bPlayerIsDead);
+	if(bPlayerIsDead)
+	{
+		Die();
+	}
+
+	return DamageAmount;
+}
+
+void ARPGLearnGameCharacter::DrainStamina()
 {
 	if(CanSprint)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Draining Stamina"));
+		bool bPlayerIsDead = false;
+		PlayerStatsComponent->DecreaseStamina(1.f, bPlayerIsDead);
+		CanSprint = !bPlayerIsDead;
+		IsSprinting = !bPlayerIsDead;
 	}
+	else
+	{
+		GetCharacterMovement()->MaxWalkSpeed = 500.f;
+	}
+}
+
+void ARPGLearnGameCharacter::RestoreStamina() const 
+{
+	PlayerStatsComponent->IncreaseStamina(1.f);
+}
+
+void ARPGLearnGameCharacter::Die()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Player is dead"));
+	DisableInput(Cast<APlayerController>(GetController()));
+	GetMesh()->SetSimulatePhysics(true);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -124,12 +169,10 @@ void ARPGLearnGameCharacter::OnCrouchTimelineFinished()
 {
 }
 
-/*
 void ARPGLearnGameCharacter::Vault()
 {
 	VaultComponent->Vault();
 }
-*/
 
 //////////////////////////////////////////////////////////////////////////
 // Input

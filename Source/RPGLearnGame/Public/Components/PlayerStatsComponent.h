@@ -36,28 +36,32 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stamina")
 	float MaxStamina = 100.f;
 
+public:
+
+	virtual void TickComponent(const float DeltaTime, const ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	
 	// Health functions
 	UFUNCTION(BlueprintCallable, Category = "Health")
-	void DecreaseHealth(float Damage, bool& IsPlayerDead);
+	void DecreaseHealth(const float Damage, bool& IsPlayerDead);
 
 	UFUNCTION(BlueprintCallable, Category = "Health")
-	void IncreaseMaxHealth(float NewMaxHealth);
+	void IncreaseMaxHealth(const float NewMaxHealth);
 	
 	UFUNCTION(BlueprintCallable, Category = "Health")
-	void IncreaseHealth(float NewHealth);
+	void IncreaseHealth(const float NewHealth);
 	
 	UFUNCTION(BlueprintCallable, Category = "Health")
-	void UpdateHealth();
+	void UpdateHealth() const;
 	
 	// Stamina functions
 	UFUNCTION(BlueprintCallable, Category = "Stamina")
-	void DecreaseStamina(float StaminaCost);
+	void DecreaseStamina(const float StaminaCost, bool& IsPlayerDead);
 
 	UFUNCTION(BlueprintCallable, Category = "Stamina")
-	void IncreaseMaxStamina(float NewMaxStamina);
+	void IncreaseMaxStamina(const float NewMaxStamina);
 
 	UFUNCTION(BlueprintCallable, Category = "Stamina")
-	void IncreaseStamina(float NewStamina);
+	void IncreaseStamina(const float NewStamina);
 
 	UFUNCTION(BlueprintCallable, Category = "Stamina")
 	void UpdateStamina();
@@ -68,13 +72,15 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "HUD")
 	URPGHUD* HUDWidget;
-
-public:	
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
 	UPROPERTY(BlueprintAssignable)
 	FOnUpdateHealthBarSignature OnUpdateHealthBar;
 	
 	UPROPERTY(BlueprintAssignable)
 	FOnUpdateStaminaBarSignature OnUpdateStaminaBar;
+	
+	inline float GetCurrentHealth() const { return CurrentHealth; }
+	inline float GetMaxHealth() const { return MaxHealth; }
+	inline float GetCurrentStamina() const { return CurrentStamina; }
+	inline float GetMaxStamina() const { return MaxStamina; }
 };

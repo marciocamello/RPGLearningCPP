@@ -11,12 +11,10 @@ class UPlayerStatsComponent;
 void URPGHUD::NativeConstruct()
 {
 	Super::NativeConstruct();
-	
-	UActorComponent* PlayerStatsComponent = GetOwningPlayerPawn()->GetComponentByClass(PlayerStatsComponentClass);
-	if(PlayerStatsComponent)
+
+	if(UActorComponent* PlayerStatsComponent = GetOwningPlayerPawn()->GetComponentByClass(PlayerStatsComponentClass))
 	{
-		UPlayerStatsComponent* PlayerStats = Cast<UPlayerStatsComponent>(PlayerStatsComponent);
-		if(PlayerStats)
+		if(UPlayerStatsComponent* PlayerStats = Cast<UPlayerStatsComponent>(PlayerStatsComponent))
 		{
 			PlayerStats->OnUpdateHealthBar.AddUniqueDynamic(this,&URPGHUD::OnUpdateHealthBar);
 			PlayerStats->OnUpdateStaminaBar.AddUniqueDynamic(this,&URPGHUD::OnUpdateStaminaBar);

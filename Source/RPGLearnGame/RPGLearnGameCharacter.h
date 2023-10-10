@@ -9,6 +9,7 @@
 #include "MotionWarpingComponent.h"
 #include "RPGLearnGameCharacter.generated.h"
 
+class UPlayerStatsComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class UMotionWarpingComponent;
@@ -19,6 +20,8 @@ class UCurveFloat;
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
+
+DECLARE_EVENT(FMyDamageEvent, FAnyDamageReceivedEvent);
 
 UCLASS(config=Game)
 class ARPGLearnGameCharacter : public ACharacter
@@ -39,8 +42,12 @@ class ARPGLearnGameCharacter : public ACharacter
 	UMotionWarpingComponent* MotionWarpingComponent;
 
 	// Vaulting
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character|Locomotion", meta = (AllowPrivateAccess = "true"))
-	//UVaultComponent* VaultComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character|Locomotion", meta = (AllowPrivateAccess = "true"))
+	UVaultComponent* VaultComponent;
+
+	// Player Stats
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character|Stats", meta = (AllowPrivateAccess = "true"))
+	UPlayerStatsComponent* PlayerStatsComponent;
 	
 	// Inputs
 	/** MappingContext */
@@ -68,8 +75,8 @@ class ARPGLearnGameCharacter : public ACharacter
 	UInputAction* SprintAction;
 
 	/** Vault Input Action */
-	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	//UInputAction* VaultAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* VaultAction;
 
 public:
 	ARPGLearnGameCharacter();
@@ -87,8 +94,8 @@ private:
 	UFUNCTION()
 	void OnCrouchTimelineFinished();
 
-	//UFUNCTION()
-	//void Vault();
+	UFUNCTION()
+	void Vault();
 	
 protected:
 
@@ -111,6 +118,9 @@ protected:
 	
 	// To add mapping context
 	virtual void BeginPlay() override;
+
+private:
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 public:
 	/** Returns CameraBoom subobject **/
@@ -143,7 +153,16 @@ public:
 	FTimerHandle SprintTime;
 
 	UFUNCTION()
-	void DrainStamina() const;
+	void DrainStamina();
+	
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Character|Locomotion")
+	FTimerHandle RestoreTime;
+
+	UFUNCTION()
+	void RestoreStamina() const;
+
+	// Die
+	void Die();
 
 	// Vaulting
 	FORCEINLINE class UMotionWarpingComponent* GetMotionWarpingComponent() const { return MotionWarpingComponent; }

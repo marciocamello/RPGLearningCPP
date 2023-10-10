@@ -30,11 +30,12 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UImage* HeroImage;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerStats")
 	TSubclassOf<UActorComponent> PlayerStatsComponentClass;
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void OnUpdateHealthBar(float HealthPercentage);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void OnUpdateStaminaBar(float StaminaPercentage);
 };
