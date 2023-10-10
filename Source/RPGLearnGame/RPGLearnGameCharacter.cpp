@@ -169,7 +169,7 @@ void ARPGLearnGameCharacter::OnCrouchTimelineFinished()
 {
 }
 
-void ARPGLearnGameCharacter::Vault()
+void ARPGLearnGameCharacter::Vault(const FInputActionValue& Value)
 {
 	VaultComponent->Vault();
 }
@@ -201,7 +201,7 @@ void ARPGLearnGameCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ARPGLearnGameCharacter::StopSprint);
 
 		// Vaulting
-		EnhancedInputComponent->BindAction(VaultAction, ETriggerEvent::Started, this, &ARPGLearnGameCharacter::Vault);
+		EnhancedInputComponent->BindAction(VaultAction, ETriggerEvent::Triggered, this, &ARPGLearnGameCharacter::Vault);
 	}
 	else
 	{

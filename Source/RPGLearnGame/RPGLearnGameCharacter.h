@@ -93,9 +93,6 @@ private:
 
 	UFUNCTION()
 	void OnCrouchTimelineFinished();
-
-	UFUNCTION()
-	void Vault();
 	
 protected:
 
@@ -112,6 +109,8 @@ protected:
 	/** Called for sprint input */
 	void StartSprint(const FInputActionValue& Value);
 	void StopSprint(const FInputActionValue& Value);
+
+	void Vault(const FInputActionValue& Value);
 	
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

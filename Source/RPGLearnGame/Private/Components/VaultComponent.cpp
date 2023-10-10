@@ -21,15 +21,15 @@ UVaultComponent::UVaultComponent()
 
 void UVaultComponent::Vault()
 {
+	TArray<AActor*> IgnoreActors;
+	IgnoreActors.Add(GetOwner());
+	
 	for(int CalculateDistanceIndex = 0; CalculateDistanceIndex <= 2; CalculateDistanceIndex++)
 	{
 		FVector CalculateDistanceStart = GetOwner()->GetActorLocation() + FVector(0.f, 0.f, CalculateDistanceIndex * 30);
 		FVector CalculateDistanceEnd = CalculateDistanceStart + (GetOwner()->GetActorRotation().Vector() * 180.f);
 
 		FHitResult CalculateDistanceHitResult;
-
-		TArray<AActor*> IgnoreActors;
-		IgnoreActors.Add(GetOwner());
 
 		UKismetSystemLibrary::SphereTraceSingle(
 			GetWorld(),
