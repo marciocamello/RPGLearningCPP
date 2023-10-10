@@ -201,7 +201,7 @@ void ARPGLearnGameCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ARPGLearnGameCharacter::StopSprint);
 
 		// Vaulting
-		//EnhancedInputComponent->BindAction(VaultAction, ETriggerEvent::Started, this, &ARPGLearnGameCharacter::Vault);
+		EnhancedInputComponent->BindAction(VaultAction, ETriggerEvent::Started, this, &ARPGLearnGameCharacter::Vault);
 	}
 	else
 	{
