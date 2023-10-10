@@ -24,9 +24,12 @@ void UVaultComponent::Vault()
 	for(int CalculateDistanceIndex = 0; CalculateDistanceIndex <= 2; CalculateDistanceIndex++)
 	{
 		FVector CalculateDistanceStart = GetOwner()->GetActorLocation() + FVector(0.f, 0.f, CalculateDistanceIndex * 30);
-		const FVector CalculateDistanceEnd = CalculateDistanceStart + (GetOwner()->GetActorRotation().Vector() * 180.f);
+		FVector CalculateDistanceEnd = CalculateDistanceStart + (GetOwner()->GetActorRotation().Vector() * 180.f);
 
 		FHitResult CalculateDistanceHitResult;
+
+		TArray<AActor*> IgnoreActors;
+		IgnoreActors.Add(GetOwner());
 
 		UKismetSystemLibrary::SphereTraceSingle(
 			GetWorld(),
@@ -35,7 +38,7 @@ void UVaultComponent::Vault()
 			5.f,
 			UEngineTypes::ConvertToTraceType(ECC_Visibility),
 			false,
-			{},
+			IgnoreActors,
 			EDrawDebugTrace::ForDuration,
 			CalculateDistanceHitResult,
 			true,
@@ -63,7 +66,7 @@ void UVaultComponent::Vault()
 					10.f,
 					UEngineTypes::ConvertToTraceType(ECC_Visibility),
 					false,
-					{},
+					IgnoreActors,
 					EDrawDebugTrace::ForDuration,
 					CalculateHeightHitResult,
 					true,
@@ -117,7 +120,7 @@ void UVaultComponent::Vault()
 						LandPosLocationEnd,
 						UEngineTypes::ConvertToTraceType(ECC_Visibility),
 						false,
-						{},
+						IgnoreActors,
 						EDrawDebugTrace::ForDuration,
 						LandPosHitResult,
 						true,
